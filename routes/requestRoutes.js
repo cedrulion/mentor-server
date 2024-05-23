@@ -13,5 +13,7 @@ router.get('/request/status',  passport.authenticate('jwt', { session: false }),
 router.get('/request-status',  passport.authenticate('jwt', { session: false }), RequestController.getRequestStatusForLearnerr);
 // Update request status
 router.put('/requests/:requestId',  passport.authenticate('jwt', { session: false }), RequestController.updateRequestStatus);
+router.delete('/requests/:requestId',passport.authenticate('jwt', { session: false }), RequestController.deleteRequest);
+router.get('/learner-requests' ,passport.authenticate('jwt', { session: false }), RequestController.getRequestsByLearner);
 
 module.exports = router;

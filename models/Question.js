@@ -4,7 +4,7 @@ const questionSchema = new mongoose.Schema({
   mentor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'UserDetail',
-    required: true,
+    
   },
   mentorFirstName: {
     type: String,
@@ -17,7 +17,7 @@ const questionSchema = new mongoose.Schema({
   learner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'UserDetail',
-    required: true,
+    
   },
   learnerFirstName: {
     type: String,
@@ -32,6 +32,15 @@ const questionSchema = new mongoose.Schema({
     required: true,
   },
   replies: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserDetail',
+      },
+      message: String,
+    }
+  ],
+  comments: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,

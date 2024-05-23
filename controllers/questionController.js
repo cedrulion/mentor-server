@@ -1,6 +1,57 @@
 const Question = require('../models/Question');
 const Request = require('../models/Request');
 const UserDetail = require('../models/UserDetail');
+exports.askQuestion = async (req, res) => {
+  const learnerId = req.user._id;
+  const { message } = req.body;
+
+  try {
+    const learnerDetails = await UserDetail.findOne({ user: learnerId, role: 'learner' });
+    if (!learnerDetails) {
+      return res.status(404).json({ error: 'Learner not found' });
+    }
+
+    const { firstName } = learnerDetails;
+
+    const question = new Question({
+      learner: learnerId,
+      learnerFirstName: firstName,
+      message,
+    });
+    await question.save();
+
+    res.status(201).json({ message: 'Question sent successfully', question });
+  } catch (error) {
+    console.error('Error asking question:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+exports.commentOnQuestion = async (req, res) => {
+  const userId = req.user._id;
+  const { comment } = req.body;
+  const { questionId } = req.params;
+
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    const commentObject = {
+      user: userId,
+      message: comment,
+    };
+
+    question.comments.push(commentObject);
+    await question.save();
+
+    res.status(200).json({ message: 'Comment added successfully', question });
+  } catch (error) {
+    console.error('Error commenting on question:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 exports.askQuestionToMentor = async (req, res) => {
   const learnerId = req.user._id;
@@ -29,6 +80,68 @@ exports.askQuestionToMentor = async (req, res) => {
     res.status(201).json({ message: 'Question sent to mentor', question });
   } catch (error) {
     console.error('Error asking question to mentor:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+exports.getQuestionById = async (req, res) => {
+  const { questionId } = req.params;
+
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    res.status(200).json(question);
+  } catch (error) {
+    console.error('Error getting question by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getAllQuestions = async (req, res) => {
+  try {
+    const questions = await Question.find();
+    res.status(200).json(questions);
+  } catch (error) {
+    console.error('Error getting all questions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+exports.getCommentById = async (req, res) => {
+  const { questionId, commentId } = req.params;
+
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    const comment = question.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    res.status(200).json(comment);
+  } catch (error) {
+    console.error('Error getting comment by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getAllCommentsForQuestion = async (req, res) => {
+  const { questionId } = req.params;
+
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    const comments = question.comments;
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error('Error getting all comments for question:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

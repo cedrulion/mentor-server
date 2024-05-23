@@ -73,13 +73,13 @@ exports.getRequestStatusForLearner = async (req, res) => {
 
   try {
     // Find the request where the learner ID matches and populate the mentor details
-    const request = await Request.findOne({ learner: learnerId }).populate('mentor', 'firstName lastName');
+    const requests = await Request.findOne({ learner: learnerId });
 
-    if (!request) {
+    if (!requests) {
       return res.status(404).json({ message: 'Request not found' });
     }
 
-    res.status(200).json({ status: request.status, mentor: request.mentor });
+    res.status(200).json(requests);
   } catch (error) {
     console.error('Error getting request status for learner:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -98,6 +98,43 @@ exports.getRequestStatusForLearnerr = async (req, res) => {
     res.status(200).json(requests);
   } catch (error) {
     console.error('Error getting request status for learner:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+exports.deleteRequest = async (req, res) => {
+  const { requestId } = req.params;
+
+  try {
+    const request = await Request.findById(requestId);
+
+    if (!request) {
+      return res.status(404).json({ error: 'Request not found' });
+    }
+
+    if (request.status !== 'accepted') {
+      await Request.findByIdAndDelete(requestId);
+      return res.status(200).json({ message: 'Request deleted successfully' });
+    } else {
+      return res.status(400).json({ error: 'Request cannot be deleted as it is already accepted' });
+    }
+  } catch (error) {
+    console.error('Error deleting request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+exports.getRequestsByLearner = async (req, res) => {
+  const learnerId = req.user._id; // Assuming the user ID is available in req.user
+
+  try {
+    const requests = await Request.find({ learner: learnerId });
+
+    if (!requests || requests.length === 0) {
+      return res.status(404).json({ message: 'No requests found for the learner' });
+    }
+
+    res.status(200).json(requests);
+  } catch (error) {
+    console.error('Error getting requests for learner:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

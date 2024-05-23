@@ -9,6 +9,10 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+ date: {
+    type: Date,
+    required: true,
+  },
   type: {
     type: String,
     enum: ['Webinar', 'Video', 'Article'],

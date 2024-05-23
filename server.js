@@ -35,13 +35,14 @@ const userDetailsRouter = require('./routes/userDetailsRouter');
 const questionRoutes = require('./routes/questionRoutes');
 const resourceRoutes = require('./routes/resourceRoutes');
 const requestRoutes = require('./routes/requestRoutes');
+const experienceRoutes = require('./routes/experienceRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/detail', userDetailsRouter);
 
 app.use('/api/questions', questionRoutes);
-
+app.use('/api', experienceRoutes);
 app.use('/api', resourceRoutes);
 app.use('/api', requestRoutes);
 

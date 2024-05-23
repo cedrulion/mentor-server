@@ -8,10 +8,10 @@ const getFileExtension = (filename) => {
 
 const createResource = async (req, res) => {
   try {
-    const { title, description, type ,filePath} = req.body;
+    const { title, description, type, date ,filePath} = req.body;
     const userId = req.user.id;
 
-    let resourceData = { title, description, type, user: userId ,filePath};
+    let resourceData = { title, description, type, date, user: userId ,filePath};
 
     if (type === 'Video') {
       const videoExtension = req.file ? getFileExtension(req.file.originalname) : null;
@@ -98,10 +98,67 @@ const getResources = async (req, res) => {
   }
 };
 
+const getVideo = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ success: false, error: 'Resource not found' });
+    }
+
+    if (resource.type !== 'Video') {
+      return res.status(400).json({ success: false, error: 'Resource is not a video' });
+    }
+
+    const videoPath = path.join(__dirname, '..', 'uploads', resource.filePath);
+    res.sendFile(videoPath);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+const getArticle = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ success: false, error: 'Resource not found' });
+    }
+
+    if (resource.type !== 'Article') {
+      return res.status(400).json({ success: false, error: 'Resource is not an article' });
+    }
+
+    const articlePath = path.join(__dirname, '..', 'uploads', resource.filePath);
+    res.sendFile(articlePath);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+const getWebinar = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ success: false, error: 'Resource not found' });
+    }
+
+    if (resource.type !== 'Webinar') {
+      return res.status(400).json({ success: false, error: 'Resource is not a webinar' });
+    }
+
+    // Assuming webinarUrl is a URL to the webinar content
+    res.redirect(resource.webinarUrl);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
 module.exports = {
   createResource,
   getResourceById,
   updateResourceById,
   deleteResourceById,
   getResources,
+  getVideo,
+  getArticle,
+  getWebinar,
 };
