@@ -22,7 +22,7 @@ const requestSchema = new mongoose.Schema({
   },
   classType: {
     type: String,
-    enum: ['in person', 'online', 'workshops', 'one-one'],
+    enum: ['inperson', 'online', 'workshops', 'oneonone'],
     required: true,
   },
   classTime: {

@@ -10,6 +10,6 @@ router.post('/userdetail', passport.authenticate('jwt', { session: false }), use
 router.get('/user/detail/:userId', passport.authenticate('jwt', { session: false }), userDetailsController.getUserDetail);
 router.get('/getdetail', passport.authenticate('jwt', { session: false }), userDetailsController.getUserDetails);
 // Route for getting all user details
-router.get('/user/details', passport.authenticate('jwt', { session: false }), userDetailsController.getAllUserDetails);
+router.get('/user/details', userDetailsController.getAllUserDetails);
 
 module.exports = router;
