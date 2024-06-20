@@ -5,7 +5,7 @@ const config = require('../config/config');
 
 exports.signUp = async (req, res) => {
   try {
-    const { username, email, password, confirmPassword, dob } = req.body;
+    const { username, email, password, confirmPassword} = req.body;
 
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Passwords do not match" });
@@ -13,7 +13,7 @@ exports.signUp = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ username, email, password: hashedPassword, dob });
+    const newUser = new User({ username, email, password: hashedPassword});
     await newUser.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {

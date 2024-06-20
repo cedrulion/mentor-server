@@ -8,23 +8,28 @@ const getFileExtension = (filename) => {
 
 const createResource = async (req, res) => {
   try {
-    const { title, description, type, date ,filePath} = req.body;
+    const { title, description, type, date, webinarUrl, moduleUrl } = req.body;
     const userId = req.user.id;
 
-    let resourceData = { title, description, type, date, user: userId ,filePath};
+    let resourceData = { title, description, type, date, user: userId };
 
     if (type === 'Video') {
-      const videoExtension = req.file ? getFileExtension(req.file.originalname) : null;
-      const videoUrl = req.file ? `${req.file.filename}` : null;
+      const videoExtension = getFileExtension(req.file.originalname);
+      const videoUrl = `/uploads/${req.file.filename}`;
+      resourceData.filePath = req.file.path;
       resourceData.videoExtension = videoExtension;
       resourceData.videoUrl = videoUrl;
     } else if (type === 'Article') {
-      const articleExtension = req.file ? getFileExtension(req.file.originalname) : null;
+      const articleExtension = getFileExtension(req.file.originalname);
+      const articleUrl = `/uploads/${req.file.filename}`;
+      resourceData.filePath = req.file.path;
       resourceData.articleExtension = articleExtension;
-      const articleUrl = req.file ? `/articles/${req.file.filename}` : null;
       resourceData.articleUrl = articleUrl;
     } else if (type === 'Webinar') {
-      resourceData.webinarUrl = req.body.webinarUrl;
+      resourceData.webinarUrl = webinarUrl;
+    } else if (type === 'Module') {
+      resourceData.filePath = req.file.path;
+      resourceData.moduleUrl = moduleUrl; // assuming moduleUrl is a URL to the module content
     }
 
     const resource = await Resource.create(resourceData);
@@ -40,20 +45,7 @@ const getResourceById = async (req, res) => {
     if (!resource) {
       return res.status(404).json({ success: false, error: 'Resource not found' });
     }
-
-    let resourceData = { success: true, data: {} };
-
-    if (resource.type === 'Video') {
-      resourceData.data.videoUrl = resource.videoUrl ? resource.videoUrl : null;
-    } else if (resource.type === 'Article') {
-      resourceData.data.articleUrl = resource.articleUrl ? resource.articleUrl : null;
-    } else if (resource.type === 'Webinar') {
-      resourceData.data.webinarUrl = resource.webinarUrl ? resource.webinarUrl : null;
-    } else {
-      resourceData.data = resource;
-    }
-
-    res.status(200).json(resourceData);
+    res.status(200).json({ success: true, data: resource });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -82,6 +74,14 @@ const deleteResourceById = async (req, res) => {
     if (!resource) {
       return res.status(404).json({ success: false, error: 'Resource not found' });
     }
+    // Optionally delete the file from the filesystem
+    if (resource.filePath) {
+      fs.unlink(path.join(__dirname, '..', resource.filePath), (err) => {
+        if (err) {
+          console.error('Failed to delete file:', err);
+        }
+      });
+    }
     res.status(200).json({ success: true, data: {} });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -109,7 +109,7 @@ const getVideo = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Resource is not a video' });
     }
 
-    const videoPath = path.join(__dirname, '..', 'uploads', resource.filePath);
+    const videoPath = path.join(__dirname, '..', resource.filePath);
     res.sendFile(videoPath);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -127,7 +127,7 @@ const getArticle = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Resource is not an article' });
     }
 
-    const articlePath = path.join(__dirname, '..', 'uploads', resource.filePath);
+    const articlePath = path.join(__dirname, '..', resource.filePath);
     res.sendFile(articlePath);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -145,8 +145,25 @@ const getWebinar = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Resource is not a webinar' });
     }
 
-    // Assuming webinarUrl is a URL to the webinar content
     res.redirect(resource.webinarUrl);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+const getModule = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ success: false, error: 'Resource not found' });
+    }
+
+    if (resource.type !== 'Module') {
+      return res.status(400).json({ success: false, error: 'Resource is not a module' });
+    }
+
+    const modulePath = path.join(__dirname, '..', resource.filePath);
+    res.sendFile(modulePath);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -161,4 +178,5 @@ module.exports = {
   getVideo,
   getArticle,
   getWebinar,
+  getModule,
 };

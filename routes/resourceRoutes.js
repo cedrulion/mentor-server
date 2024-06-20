@@ -12,7 +12,7 @@ const {
   getVideo,
   getArticle,
   getWebinar,
-
+  getModule,
 } = require('../controllers/resourceController');
 
 const storage = multer.diskStorage({
@@ -32,11 +32,12 @@ router.post('/resources', passport.authenticate('jwt', { session: false }), uplo
 router.get('/resources/:id', passport.authenticate('jwt', { session: false }), getResourceById);
 router.put('/resources/:id', passport.authenticate('jwt', { session: false }), updateResourceById);
 router.delete('/resources/:id', passport.authenticate('jwt', { session: false }), deleteResourceById);
-router.get('/resources',  getResources);
+router.get('/resources', getResources);
 
 // New routes for getting specific types of resources
 router.get('/resources/video/:id', passport.authenticate('jwt', { session: false }), getVideo);
 router.get('/resources/article/:id', passport.authenticate('jwt', { session: false }), getArticle);
 router.get('/resources/webinar/:id', passport.authenticate('jwt', { session: false }), getWebinar);
+router.get('/resources/module/:id', passport.authenticate('jwt', { session: false }), getModule);
 
 module.exports = router;

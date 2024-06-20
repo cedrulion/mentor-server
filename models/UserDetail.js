@@ -1,4 +1,3 @@
-// models/UserDetail.js
 const mongoose = require('mongoose');
 
 const userDetailSchema = new mongoose.Schema({
@@ -35,7 +34,6 @@ const userDetailSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
- 
   country: {
     type: String,
     required: true,
@@ -47,6 +45,10 @@ const userDetailSchema = new mongoose.Schema({
   street: {
     type: String,
     required: true,
+  },
+  review: {
+    type: Number,
+    default: 0,
   },
 });
 

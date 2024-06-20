@@ -11,5 +11,8 @@ router.get('/user/detail/:userId', passport.authenticate('jwt', { session: false
 router.get('/getdetail', passport.authenticate('jwt', { session: false }), userDetailsController.getUserDetails);
 // Route for getting all user details
 router.get('/user/details', userDetailsController.getAllUserDetails);
+router.get('/user/info', passport.authenticate('jwt', { session: false }), userDetailsController.getAllUser);
+router.get('/view/:id', passport.authenticate('jwt', { session: false }), userDetailsController.getUserDetailById);
+router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), userDetailsController.deleteUserDetail);
 
 module.exports = router;

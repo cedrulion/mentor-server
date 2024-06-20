@@ -16,11 +16,6 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  dob: {
-    type: Date,
-    required: true,
-  },
-
 });
 
 const User = mongoose.model('User', userSchema);

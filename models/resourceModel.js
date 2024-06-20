@@ -15,7 +15,7 @@ const resourceSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['Webinar', 'Video', 'Article'],
+    enum: ['Webinar', 'Video', 'Article', 'Module'],
     required: true,
   },
   user: {

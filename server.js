@@ -6,6 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const config = require('./config/config');
 require('dotenv').config();
+const path = require('path'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ const resourceRoutes = require('./routes/resourceRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const experienceRoutes = require('./routes/experienceRoutes');
 const statusRoutes = require('./routes/statusRoutes');
+const skillRoutes = require('./routes/skillRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -44,9 +46,12 @@ app.use('/api/detail', userDetailsRouter);
 
 app.use('/api/questions', questionRoutes);
 app.use('/api', experienceRoutes);
+app.use('/api', skillRoutes);
 app.use('/api', resourceRoutes);
 app.use('/api', requestRoutes);
 app.use('/api/status', statusRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 

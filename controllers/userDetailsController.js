@@ -36,8 +36,12 @@ exports.createUserDetail = async (req, res) => {
 
 exports.getUserDetail = async (req, res) => {
   try {
-    const userId = req.params.userId; // Extract userId from route parameter
-    const userDetail = await UserDetail.findOne({ user: userId });
+    const userId = req.params.userId;
+    const userDetail = await UserDetail.findOneAndUpdate(
+      { user: userId },
+      { $inc: { review: 1 } },
+      { new: true }
+    );
 
     if (!userDetail) {
       return res.status(404).json({ message: 'User detail not found' });
@@ -69,6 +73,45 @@ exports.getAllUserDetails = async (req, res) => {
   try {
     const allUserDetails = await UserDetail.find({ role: 'mentor' });
     res.status(200).json(allUserDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.getAllUser= async (req, res) => {
+  try {
+    const allUserDetails = await UserDetail.find({});
+    res.status(200).json(allUserDetails);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.getUserDetailById = async (req, res) => {
+  try {
+    const userDetailId = req.params.id;
+    const userDetail = await UserDetail.findById(userDetailId);
+
+    if (!userDetail) {
+      return res.status(404).json({ message: 'User detail not found' });
+    }
+
+    res.status(200).json(userDetail);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+exports.deleteUserDetail = async (req, res) => {
+  try {
+    const userDetailId = req.params.id;
+    const userDetail = await UserDetail.findByIdAndDelete(userDetailId);
+
+    if (!userDetail) {
+      return res.status(404).json({ message: 'User detail not found' });
+    }
+
+    res.status(200).json({ message: 'User detail deleted successfully!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
