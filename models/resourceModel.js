@@ -30,9 +30,13 @@ const resourceSchema = new mongoose.Schema({
   // Optional: You can add more fields based on your requirements
   videoExtension: String,
   videoUrl: String,
+  moduleExtension: String,
+  moduleUrl: String,
   articleExtension: String,
   articleUrl: String,
-  webinarUrl: String,
+  webinarUrl: {
+    type: String
+},
 });
 
 const Resource = mongoose.model('Resource', resourceSchema);

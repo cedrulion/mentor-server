@@ -28,6 +28,8 @@ const createResource = async (req, res) => {
     } else if (type === 'Webinar') {
       resourceData.webinarUrl = webinarUrl;
     } else if (type === 'Module') {
+      const moduleExtension = getFileExtension(req.file.originalname);
+      const moduleUrl = `/uploads/${req.file.filename}`;
       resourceData.filePath = req.file.path;
       resourceData.moduleUrl = moduleUrl; // assuming moduleUrl is a URL to the module content
     }
