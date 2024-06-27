@@ -25,8 +25,15 @@ const createResource = async (req, res) => {
       resourceData.filePath = req.file.path;
       resourceData.articleExtension = articleExtension;
       resourceData.articleUrl = articleUrl;
-    } else if (type === 'Webinar') {
+   } else if (type === 'Webinar') {
+      if (!webinarUrl) {
+        return res.status(400).json({
+          success: false,
+          message: 'Webinar URL is required for Webinar type.',
+        });
+      }
       resourceData.webinarUrl = webinarUrl;
+    
     } else if (type === 'Module') {
       const moduleExtension = getFileExtension(req.file.originalname);
       const moduleUrl = `/uploads/${req.file.filename}`;

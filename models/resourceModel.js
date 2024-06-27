@@ -25,7 +25,7 @@ const resourceSchema = new mongoose.Schema({
   },
   filePath: {
     type: String,
-    required: true,
+    
   },
   // Optional: You can add more fields based on your requirements
   videoExtension: String,
@@ -33,10 +33,17 @@ const resourceSchema = new mongoose.Schema({
   moduleExtension: String,
   moduleUrl: String,
   articleExtension: String,
-  articleUrl: String,
+  articleUrl: String, 
   webinarUrl: {
-    type: String
-},
+    type: String,
+    validate: {
+      validator: function (v) {
+        return /^https?:\/\/.*/.test(v); // simple URL validation
+      },
+      message: props => `${props.value} is not a valid URL!`
+    },
+    required: function() { return this.type === 'Webinar'; },
+  },
 });
 
 const Resource = mongoose.model('Resource', resourceSchema);
