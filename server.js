@@ -39,10 +39,12 @@ const requestRoutes = require('./routes/requestRoutes');
 const experienceRoutes = require('./routes/experienceRoutes');
 const statusRoutes = require('./routes/statusRoutes');
 const skillRoutes = require('./routes/skillRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/detail', userDetailsRouter);
+app.use('/api/chat', chatRoutes); 
 
 app.use('/api/questions', questionRoutes);
 app.use('/api', experienceRoutes);

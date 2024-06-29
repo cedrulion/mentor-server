@@ -10,12 +10,14 @@ exports.askQuestion = async (req, res) => {
     if (!learnerDetails) {
       return res.status(404).json({ error: 'Learner not found' });
     }
-
+  
     const { firstName } = learnerDetails;
+    
 
     const question = new Question({
       learner: learnerId,
       learnerFirstName: firstName,
+      
       message,
     });
     await question.save();
