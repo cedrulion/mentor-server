@@ -1,5 +1,6 @@
 const Chat = require('../models/Chat');
 
+// Client sends a message
 exports.createMessage = async (req, res) => {
   const clientId = req.user._id;
   const { mentorId, message } = req.body;
@@ -10,7 +11,34 @@ exports.createMessage = async (req, res) => {
       {
         $push: {
           messages: {
-            sender: req.user._id,
+            sender: clientId,
+            message: message,
+            timestamp: new Date()
+          }
+        }
+      },
+      { upsert: true, new: true }
+    );
+
+    res.status(200).json({ message: 'Message sent', chat });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Mentor replies to a message
+exports.replyMessage = async (req, res) => {
+  const mentorId = req.user._id;
+  const { clientId, message } = req.body;
+
+  try {
+    const chat = await Chat.findOneAndUpdate(
+      { mentor: mentorId, client: clientId },
+      {
+        $push: {
+          messages: {
+            sender: mentorId,
             message: message,
             timestamp: new Date()
           }
@@ -27,7 +55,7 @@ exports.createMessage = async (req, res) => {
 };
 
 exports.getChat = async (req, res) => {
-  const mentorId = req.params.mentorId
+  const mentorId = req.params.mentorId;
   const clientId = req.user._id;
 
   try {
@@ -45,11 +73,9 @@ exports.getChat = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
-
-exports.getAllChatsForClient = async (req, res) => {
-  const mentorId = req.params.mentorId
-  const clientId = req.user._id;
+exports.getChats = async (req, res) => {
+  const clientId = req.params.clientId;
+  const mentorId = req.user._id;
 
   try {
     const chat = await Chat.findOne({ mentor: mentorId, client: clientId })
@@ -63,6 +89,36 @@ exports.getAllChatsForClient = async (req, res) => {
     res.status(200).json(chat);
   } catch (error) {
     console.error('Error getting chat:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getChatsForMentor = async (req, res) => {
+  const mentorId = req.user._id;
+
+  try {
+    const chats = await Chat.find({ mentor: mentorId })
+      .populate('client', 'firstName lastName')
+      .exec();
+
+    res.status(200).json(chats);
+  } catch (error) {
+    console.error('Error getting chats:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getChatsForClient = async (req, res) => {
+  const clientId = req.user._id;
+
+  try {
+    const chats = await Chat.find({ client: clientId })
+      .populate('mentor', 'firstName lastName')
+      .exec();
+
+    res.status(200).json(chats);
+  } catch (error) {
+    console.error('Error getting chats:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

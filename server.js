@@ -44,7 +44,7 @@ const chatRoutes = require('./routes/chatRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/detail', userDetailsRouter);
-app.use('/api/chat', chatRoutes); 
+app.use('/api', chatRoutes); 
 
 app.use('/api/questions', questionRoutes);
 app.use('/api', experienceRoutes);
