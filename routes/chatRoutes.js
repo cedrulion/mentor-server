@@ -9,4 +9,10 @@ router.post('/send', passport.authenticate('jwt', { session: false }), chatContr
 // Route to get a chat between mentor and client
 router.get('/get', passport.authenticate('jwt', { session: false }), chatController.getChat);
 
+// Route to get all chats for a client
+router.get('/client', passport.authenticate('jwt', { session: false }), chatController.getAllChatsForClient);
+
+// Route to delete a message in a chat
+router.delete('/delete-message', passport.authenticate('jwt', { session: false }), chatController.deleteMessage);
+
 module.exports = router;
