@@ -14,5 +14,7 @@ router.get('/user/details', userDetailsController.getAllUserDetails);
 router.get('/user/info', passport.authenticate('jwt', { session: false }), userDetailsController.getAllUser);
 router.get('/view/:id', passport.authenticate('jwt', { session: false }), userDetailsController.getUserDetailById);
 router.delete('/delete/:id', passport.authenticate('jwt', { session: false }), userDetailsController.deleteUserDetail);
+// Route to add review to a user
+router.put('/mentors/:mentorId/review', passport.authenticate('jwt', { session: false }), userDetailsController.addReview);
 
 module.exports = router;

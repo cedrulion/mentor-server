@@ -46,10 +46,12 @@ const userDetailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  review: {
-    type: Number,
-    default: 0,
-  },
+   reviews: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      review: { type: Number, required: true }
+    }
+  ]
 });
 
 const UserDetail = mongoose.model('UserDetail', userDetailSchema);

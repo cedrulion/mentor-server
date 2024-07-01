@@ -10,7 +10,7 @@ router.get('/chat/client', passport.authenticate('jwt', { session: false }), cha
 
 // Mentor Routes
 router.post('/chat/mentor/reply', passport.authenticate('jwt', { session: false }), chatController.replyMessage);
-router.get('/chat/mentor', passport.authenticate('jwt', { session: false }), chatController.getChatsForMentor);
-router.get('/chat/mentors', passport.authenticate('jwt', { session: false }), chatController.getChats);
+router.get('/chat/mentor', passport.authenticate('jwt', { session: false }), chatController.getAllChatsForMentor); // Updated route
+router.get('/chat/mentors', passport.authenticate('jwt', { session: false }), chatController.getChats); // Consider if this is needed
 
 module.exports = router;

@@ -27,12 +27,13 @@ exports.createMessage = async (req, res) => {
   }
 };
 
-// Mentor replies to a message
+// Reply to a message
 exports.replyMessage = async (req, res) => {
-  const mentorId = req.user._id;
+  const mentorId = req.user.mentor;
   const { clientId, message } = req.body;
 
   try {
+    // Find or create the chat object
     const chat = await Chat.findOneAndUpdate(
       { mentor: mentorId, client: clientId },
       {
@@ -46,6 +47,12 @@ exports.replyMessage = async (req, res) => {
       },
       { upsert: true, new: true }
     );
+
+    // Update the client field in the chat object if necessary
+    if (!chat.client) {
+      chat.client = clientId;
+      await chat.save();
+    }
 
     res.status(200).json({ message: 'Message sent', chat });
   } catch (error) {
@@ -95,7 +102,7 @@ exports.getChats = async (req, res) => {
 
 exports.getChatsForMentor = async (req, res) => {
   const mentorId = req.user._id;
-
+  
   try {
     const chats = await Chat.find({ mentor: mentorId })
       .populate('client', 'firstName lastName')
@@ -142,4 +149,22 @@ exports.deleteMessage = async (req, res) => {
     console.error('Error deleting message:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+};
+
+exports.getAllChatsForMentor = async (req, res) => {
+  const mentorId = req.user._id;
+
+  try {
+    const chats = await Chat.find()
+      .populate('client', 'firstName lastName')
+      .populate('mentor', 'firstName lastName')
+      .populate('messages.sender', 'firstName lastName')
+      .exec();
+
+    res.status(200).json(chats);
+  } catch (error) {
+    console.error('Error getting all chats:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
 };
