@@ -22,6 +22,7 @@ mongoose.connect(config.database, {
 const connection = mongoose.connection;
 connection.once('open', () => {
   console.log('MongoDB connection established successfully');
+console.log(`Using MongoDB URI: ${config.database}`);
 });
 
 // Passport middleware
