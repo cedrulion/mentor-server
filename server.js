@@ -31,30 +31,12 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const userDetailsRouter = require('./routes/userDetailsRouter');
-
-const questionRoutes = require('./routes/questionRoutes');
-const resourceRoutes = require('./routes/resourceRoutes');
-const requestRoutes = require('./routes/requestRoutes');
-const experienceRoutes = require('./routes/experienceRoutes');
-const statusRoutes = require('./routes/statusRoutes');
-const skillRoutes = require('./routes/skillRoutes');
-const chatRoutes = require('./routes/chatRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/detail', userDetailsRouter);
-app.use('/api', chatRoutes); 
-
-app.use('/api/questions', questionRoutes);
-app.use('/api', experienceRoutes);
-app.use('/api', skillRoutes);
-app.use('/api', resourceRoutes);
-app.use('/api', requestRoutes);
-app.use('/api/status', statusRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use('/api', appointmentRoutes);
+app.use('/api', messageRoutes);
 
 
 
