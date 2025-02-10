@@ -37,6 +37,10 @@ const messageRoutes = require('./routes/messageRoutes');
 app.use('/api/auth', authRoutes);
 app.use('/api', appointmentRoutes);
 app.use('/api', messageRoutes);
+const { insertAdminUser } = require('./controllers/authController');
+
+// Call insertAdminUser to insert the admin user when the server starts
+insertAdminUser();
 
 
 

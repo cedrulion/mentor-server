@@ -102,3 +102,38 @@ exports.getLegalCounselors = async (req, res) => {
   }
 };
 
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (!userId) return res.status(400).json({ error: 'User ID is required' });
+
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.insertAdminUser = async () => {
+  try {
+    const adminExists = await User.findOne({ role: 'ADMIN' });
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash('adminpassword', 10); // Replace with a secure password
+      const newAdmin = new User({
+        fullName: 'Admin User',
+        username: 'admin',
+        email: 'admin@example.com',
+        password: hashedPassword,
+        role: 'ADMIN',
+      });
+      await newAdmin.save();
+      console.log('Admin user created successfully');
+    } else {
+      console.log('Admin user already exists');
+    }
+  } catch (error) {
+    console.error('Error inserting admin user:', error.message);
+  }
+};
