@@ -33,6 +33,9 @@ require('./config/passport')(passport);
 const authRoutes = require('./routes/authRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const caseRoutes = require('./routes/caseRoutes');
+
+app.use('/api/cases', caseRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api', appointmentRoutes);
