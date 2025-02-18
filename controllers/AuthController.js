@@ -120,7 +120,7 @@ exports.insertAdminUser = async () => {
   try {
     const adminExists = await User.findOne({ role: 'ADMIN' });
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash('adminpassword', 10); // Replace with a secure password
+      const hashedPassword = await bcrypt.hash('password', 10); // Replace with a secure password
       const newAdmin = new User({
         fullName: 'Admin User',
         username: 'admin',
